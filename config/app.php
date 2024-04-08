@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'short_code_length' => env('SHORT_CODE_LENGTH', 8),
+
+    'basic_plan_limit' => env('BASIC_PLAN_LIMIT', 10)
+
 ];
