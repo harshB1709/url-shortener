@@ -31,6 +31,10 @@
             <main>
                 {{ $slot }}
             </main>
+
+            <x-modal name="upgrade-modal" :show="false" maxWidth="2xl" focusable>
+                @include('plans.components.upgrade-modal')
+            </x-modal>
         </div>
     </body>
 </html>

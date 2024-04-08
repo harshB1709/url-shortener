@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Url;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UrlPolicy
 {
@@ -29,8 +28,7 @@ class UrlPolicy
      */
     public function create(User $user): bool
     {
-        logger($user->urls->count);
-        $user->urls->count < config('app.basic_plan_limit');
+        return $user->urls->count() < config('app.basic_plan_limit');
     }
 
     /**

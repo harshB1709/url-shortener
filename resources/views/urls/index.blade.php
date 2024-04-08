@@ -1,8 +1,3 @@
-@php
-$showCreateModal = false;
-$showUpdateModal = false;
-@endphp
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -25,6 +20,7 @@ $showUpdateModal = false;
                         <tr>
                             <th class="py-4 px-6 bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">Original URL</th>
                             <th class="py-4 px-6 bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">Short URL</th>
+                            <th class="py-4 px-6 bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">Is Active?</th>
                             <th class="py-4 px-6 bg-grey-lightest font-bold uppercase text-sm text-grey-dark border-b border-grey-light">Actions</th>
                         </tr>
                     </thead>
@@ -39,6 +35,13 @@ $showUpdateModal = false;
                                 {{ $url->original_url }}
                             </td>
                             <td class="py-4 px-6 border-b border-grey-light"><a href="{{ route('url.access', $url->short_code) }}" target="_blank" class="text-blue-500">{{ route('url.access', $url->short_code) }}</a></td>
+                            <td class="py-4 px-6 border-b border-grey-light">
+                                @if($url->is_active)
+                                    <i class="fa-regular fa-lg fa-circle-check text-green-500"></i>
+                                @else
+                                    <i class="fa-regular fa-lg fa-circle-xmark text-red-500"></i>
+                                @endif
+                            </td>
                             <td class="py-4 px-6 border-b border-grey-light flex gap-3">
                                 <button
                                     class="text-blue-500 hover:text-blue-800"
@@ -71,11 +74,11 @@ $showUpdateModal = false;
         </div>
     </div>
 
-    <x-modal name="create-modal" :show="$showCreateModal" focusable>
+    <x-modal name="create-modal" :show="false" focusable>
         @include('urls.components.create-modal')
     </x-modal>
 
-    <x-modal name="update-modal" :show="$showUpdateModal" x-ref="updateModal" focusable>
+    <x-modal name="update-modal" :show="false" x-ref="updateModal" focusable>
         @include('urls.components.update-modal')
     </x-modal>
 </x-app-layout>

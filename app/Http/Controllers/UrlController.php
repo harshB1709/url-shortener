@@ -15,11 +15,15 @@ class UrlController extends Controller
     }
 
     public function store(Request $request) {
+        $user = $request->user();
+        if($user->cannot('create', Url::class)) {
+            abort(403, 'You cannot create any more urls. Kindly upgrade your quota if required');
+        }
+
         $request->validateWithBag('urlCreate', [
             'original_url' => ['required', 'url'],
         ]);
 
-        $user = $request->user();
         $new_url = null;
 
         DB::transaction(function () use(&$new_url, $user, $request) {
@@ -31,14 +35,24 @@ class UrlController extends Controller
         });
 
         if($new_url) {
-            return response()->json([
-                'success' => true,
-                'newUrl' => $new_url
-            ]);
+            if($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'newUrl' => $new_url
+                ]);
+            }
+            else {
+                return redirect()->route('url.index')->with('success', 'URL created successfully.');
+            }
         }
-        return response()->json([
-            'message' => 'An error occured. Try again in some time'
-        ], 500);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'An error occurred. Try again in some time'
+            ], 500);
+        } else {
+            return redirect()->back()->withInput()->withErrors(['error' => 'An error occurred. Try again in some time']);
+        }
     }
 
     public function update(Request $request, Url $url) {
@@ -54,9 +68,15 @@ class UrlController extends Controller
         $url->original_url = $request->get('original_url');
         $url->is_active = $request->get('is_active');
         $url->save();
-        return response()->json([
-            'success' => true
-        ]);
+
+        if($request->expectsJson()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+        else {
+            return redirect()->back()->with('success', 'URL created successfully.');
+        }
     }
 
     public function deactivate(Request $request, Url $url) {
@@ -66,7 +86,15 @@ class UrlController extends Controller
         }
         $url->is_active = false;
         $url->save();
-        return redirect()->back();
+
+        if($request->expectsJson()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+        else {
+            return redirect()->back()->with('success', 'URL deactivated successfully.');
+        }
     }
 
     public function delete(Request $request, Url $url) {
@@ -75,7 +103,15 @@ class UrlController extends Controller
             return abort(403);
         }
         $url->delete();
-        return redirect()->back();
+
+        if($request->expectsJson()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+        else {
+            return redirect()->back()->with('success', 'URL deleted successfully.');
+        }
     }
 
     public function accessUrl(Request $request, Url $url) {
