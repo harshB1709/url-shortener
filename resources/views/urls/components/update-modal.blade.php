@@ -13,7 +13,6 @@
             this.shortenedUrl = values.shortened_url;
         },
         submitForm() {
-            console.log(this.isActive);
             fetch('/urls/' + this.url_id + '/update', {
                 method: 'POST',
                 headers: {

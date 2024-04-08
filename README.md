@@ -1,66 +1,86 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# URL Shortener Application Technical Document
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+This document outlines the technical aspects of the URL Shortener application, designed to create shorter aliases for long URLs, facilitating easier sharing and tracking.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Overview](#overview)
+- [Architecture](#architecture)
+  - [High-Level Architecture](#high-level-architecture)
+  - [Database Schema](#database-schema)
+- [Technology Stack](#technology-stack)
+- [Features](#features)
+- [API Endpoints](#api-endpoints)
+  - [Creating a Short URL](#creating-a-short-url)
+  - [Redirecting a Short URL](#redirecting-a-short-url)
+  - [Analytics](#analytics)
+- [Security Considerations](#security-considerations)
+- [Deployment](#deployment)
+- [Future Enhancements](#future-enhancements)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Architecture
 
-## Learning Laravel
+### High-Level Architecture/ Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Frontend**: Blade scaffolding provided by Laravel Breeze with AlpineJS, Tailwind CSS and FontAwesome for icons.
+- **Backend**: PHP 8.2.10, Laravel 11.2.0.
+- **Database**: SQlite for local DB (Any DB compatible with Laravel v11 can be used).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Database Schema
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Users Table** (if applicable): Consists of the user details like name, email, hashed password, etc.
+- **URLs Table**: Consists of user_id foreign key to determine the owner of the url record, the original url, the shortened code for the url, is_active to determine if the url is currently active, deleted_at for soft delete timestamps.
 
-## Laravel Sponsors
+## Features
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Short URL Generation**: Users can register/login to authenticate themselves, click on 'Generate New Url' button, enter the original URL and retrieve the new shortened URL.
 
-### Premium Partners
+## API Endpoints
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Creating a Short URL
 
-## Contributing
+- **Path**: `/urls/store`
+- **Method**: `POST`
+- **Request Parameters**: `original_url`
+- **Response**: Returns the newly created Short URL
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Updating a Short URL
 
-## Code of Conduct
+- **Path**: `/urls/{url_id}/update`
+- **Method**: `POST`
+- **Request Parameters**: `original_url`, `is_active`
+- **Response**: Returns if the request successfully went through
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Deactivating a Short URL
 
-## Security Vulnerabilities
+- **Path**: `/urls/{url_id}/deactivate`
+- **Method**: `POST`
+- **Request Parameters**: -
+- **Response**: Deactivates a given url and responds if the request went through
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Deleting a Short URL
 
-## License
+- **Path**: `/urls/{url_id}`
+- **Method**: `DELETE`
+- **Request Parameters**: -
+- **Response**: deletes a given url and responds if the request went through
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Redirecting a Short URL
+
+- **Path**: `/url/{short_code}`
+- **Method**: `GET`
+- **Response**: Redirect to the original URL or error page.
+
+## Security Considerations
+
+Authentication is being handled by default laravel configuration. For authorization of user manipulating the url records, the Policy feature of Laravel has been used. The original URL is being validated when entered by the user using the validation methods provided by Laravel.
+
+## Algorithm
+
+The app uses `Base62 Encoding` to create the short codes for the input urls. The short codes are essentially the Base62 encoding of the primary keys of a particular url record. The characters considered in the base62 encoding are `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` in that order. The advantages of this approach is that its easy to retrieve a row from the table since we can decode it to the original id and get the record. Also, no two url records with same original URL would have the same short_code
+
+## Future Enhancements
+
+- Create plans for limiting the number of urls a user can shorten

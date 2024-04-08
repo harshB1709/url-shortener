@@ -65,8 +65,12 @@ class UrlController extends Controller
             return abort(403);
         }
 
-        $url->original_url = $request->get('original_url');
-        $url->is_active = $request->get('is_active');
+        $request->validateWithBag('urlUpdate', [
+            'original_url' => ['required', 'url'],
+        ]);
+
+        $url->original_url = $request->get('original_url') ?? $url->original_url;
+        $url->is_active = $request->get('is_active') ?? $url->is_active;
         $url->save();
 
         if($request->expectsJson()) {
