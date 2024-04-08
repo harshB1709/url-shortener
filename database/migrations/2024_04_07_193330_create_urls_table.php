@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('original_url');
-            $table->string('short_code');
+            $table->string('short_code')->nullable();
             $table->boolean('is_active')->default(true);
             $table->softDeletes('deleted_at');
             $table->timestamps();

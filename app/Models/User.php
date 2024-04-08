@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Url::class);
     }
+
+    public function getRedirectRoute()
+    {
+        return route('url.index', absolute: false);
+    }
 }
