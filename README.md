@@ -25,7 +25,7 @@ This document outlines the technical aspects of the URL Shortener application, d
 ### High-Level Architecture/ Tech Stack
 
 - **Frontend**: Blade scaffolding provided by Laravel Breeze with AlpineJS, Tailwind CSS and FontAwesome for icons.
-- **Backend**: PHP 8.2.10, Laravel 11.2.0.
+- **Backend**: PHP 8.2.10, Laravel 11.2.0 and PestPHP for testing.
 - **Database**: SQlite for local DB (Any DB compatible with Laravel v11 can be used).
 
 ### Database Schema
