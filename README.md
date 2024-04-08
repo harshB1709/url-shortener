@@ -75,7 +75,7 @@ This document outlines the technical aspects of the URL Shortener application, d
 
 ## Security Considerations
 
-Authentication is being handled by default laravel configuration. For authorization of user manipulating the url records, the Policy feature of Laravel has been used. The original URL is being validated when entered by the user using the validation methods provided by Laravel.
+Authentication is being handled by dlaravel's built in authentication functionality. For authorization of user manipulating the url records, the Policy feature of Laravel has been used. The original URL is being validated when entered by the user using the validation methods provided by Laravel.
 
 ## Algorithm
 
